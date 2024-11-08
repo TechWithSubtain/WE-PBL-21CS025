@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Engineering (PBL)</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    body.light-mode { background-color: #f8f9fa; color: #343a40; }
+    body.dark-mode { background-color: #343a40; color: #f8f9fa; }
+    .profile-photo { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; }
+    .theme-switcher, .upload-button { position: absolute; right: 10px; z-index: 10; }
+    .theme-switcher { top: 10px; }
+    .upload-button { top: 60px; }
+    .list-group-item { background-color: #ffffff; color: #343a40; }
+    body.dark-mode .list-group-item { background-color: #495057; color: #f8f9fa; }
+    #profileDisplay { display: none; }
+    header, footer { background-color: #9cbde0; color: rgb(0, 0, 0); padding: 10px 0; text-align: center; }
+    .container { margin-top: 20px; }
+  </style>
+</head>
+<body class="light-mode">
+  <!-- Header -->
+  <header>
+    <h1>Profile</h1>
+  </header>
+  <!-- Theme Toggle Button -->
+  <div class="theme-switcher">
+    <button class="btn btn-secondary" onclick="toggleTheme()">
+      <i id="themeIcon" class="fas fa-sun"></i>
+    </button>
+  </div>
+  <!-- Profile Information Form (Visible initially) -->
+  <div id="profileFormSection" class="container my-4">
+    <h2>Enter Your Profile Information</h2>
+    <form id="profileForm" onsubmit="updateProfile(event)">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Name:</label>
+          <input type="text" id="name" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="title">Title:</label>
+          <input type="text" id="title" class="form-control" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="email">Email:</label>
+          <input type="email" id="email" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="phone">Phone:</label>
+          <input type="text" id="phone" class="form-control" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="location">Location:</label>
+          <input type="text" id="location" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="work">Work Experience:</label>
+          <input type="text" id="work" class="form-control" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="education">Education:</label>
+          <input type="text" id="education" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="skills">Skills (comma separated):</label>
+          <input type="text" id="skills" class="form-control" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="projects">Projects:</label>
+        <input type="text" id="projects" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="profilePhoto">Profile Photo:</label><br>
+        <input type="file" id="profilePhoto" class="btn btn-secondary" onchange="previewPhoto(event)">
+        <img id="profileImagePreview" src="https://via.placeholder.com/150" alt="Profile Photo" class="profile-photo mt-2">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+  </div>
+  <!-- Profile Information Display (Initially Hidden) -->
+  <div id="profileDisplay" class="container my-4">
+    <div class="text-center mb-4">
+      <img id="displayProfileImage" src="https://via.placeholder.com/150" alt="Profile Photo" class="profile-photo">
+      <h1 id="displayName" class="mt-3">Your Name</h1>
+      <p id="displayTitle">Your Title</p>
+    </div>
+    <section>
+      <h2>Personal Information</h2>
+      <p id="displayEmail">Email: example@example.com</p>
+      <p id="displayPhone">Phone: +123 456 7890</p>
+      <p id="displayLocation">Location: City, Country</p>
+    </section>
+    <section class="mt-4">
+      <h2>Work Experience</h2>
+      <ul id="displayWork" class="list-group"></ul>
+    </section>
+    <section class="mt-4">
+      <h2>Education</h2>
+      <ul id="displayEducation" class="list-group"></ul>
+    </section>
+    <section class="mt-4">
+      <h2>Skills</h2>
+      <ul id="displaySkills" class="list-group"></ul>
+    </section>
+    <section class="mt-4">
+      <h2>Projects</h2>
+      <ul id="displayProjects" class="list-group"></ul>
+    </section>
+  </div>
+  <!-- Footer -->
+  <footer>
+    <p><strong>© 2024 Subtain Ali. All rights reserved</strong>.</p>
+  </footer>
+  <!-- JavaScript -->
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
+      const themeIcon = document.getElementById('themeIcon');
+      if (document.body.classList.contains('dark-mode')) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    }
+    function previewPhoto(event) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById('profileImagePreview').src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    function updateProfile(event) {
+      event.preventDefault();
+      // Get form values
+      const name = document.getElementById('name').value;
+      const title = document.getElementById('title').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const location = document.getElementById('location').value;
+      const work = document.getElementById('work').value;
+      const education = document.getElementById('education').value;
+      const skills = document.getElementById('skills').value.split(',');
+      const projects = document.getElementById('projects').value;
+      const profilePhoto = document.getElementById('profilePhoto').files[0];
+      // Update profile display
+      document.getElementById('displayName').innerText = name;
+      document.getElementById('displayTitle').innerText = title;
+      document.getElementById('displayEmail').innerText = `Email: ${email}`;
+      document.getElementById('displayPhone').innerText = `Phone: ${phone}`;
+      document.getElementById('displayLocation').innerText = `Location: ${location}`;
+      // Work experience, education, skills, and projects
+      document.getElementById('displayWork').innerHTML = `<li class="list-group-item">${work}</li>`;
+      document.getElementById('displayEducation').innerHTML = `<li class="list-group-item">${education}</li>`;
+      document.getElementById('displaySkills').innerHTML = skills.map(skill => `<li class="list-group-item">${skill.trim()}</li>`).join('');
+      document.getElementById('displayProjects').innerHTML = `<li class="list-group-item">${projects}</li>`;
+      // Update the profile image
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById('displayProfileImage').src = reader.result;
+      };
+      if (profilePhoto) {
+        reader.readAsDataURL(profilePhoto);
+      }
+      // Show profile display and hide the form
+      document.getElementById('profileFormSection').style.display = 'none';
+      document.getElementById('profileDisplay').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
